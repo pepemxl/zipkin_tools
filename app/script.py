@@ -1,9 +1,12 @@
+import json
+import os
 import re
 import requests
-import json
+import statistics
 from configparser import ConfigParser
 from collections import defaultdict
 from datetime import datetime
+
 
 # Función para leer la configuración
 def read_config():
@@ -19,10 +22,14 @@ def extract_trace_id(url):
     return None
 
 # Función para obtener datos de la API de Zipkin
-def fetch_trace_data(base_url, trace_id):
+def fetch_trace_data(base_url, trace_id, save_path):
     api_url = f"{base_url}/api/v2/trace/{trace_id}"
     response = requests.get(api_url)
     if response.status_code == 200:
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        with open(save_path, "w") as file:
+            json.dump(response.json(), file, indent=4)
+        print(f"Datos del trace ID {trace_id} guardados en {save_path}")
         return response.json()
     else:
         print(f"Error al obtener datos para el trace ID {trace_id}: {response.status_code}")
