@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  zipkin-trace-processor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zipkin-trace-processor
+    volumes:
+      - ./app:/app  # Montar el directorio app
+      - /data:/data  # Montar la ruta del archivo de URLs
+    working_dir: /app
+    command: python3 script.py
